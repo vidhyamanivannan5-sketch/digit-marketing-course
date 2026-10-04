@@ -1,0 +1,1387 @@
+/*
+  Machina Template
+  https://templatemo.com/tm-632-machina
+*/
+
+/* ------------------------------------------------------------------ */
+/* THE MACHINA // 167 - Hyper-Carbon and Neon Cyan design system      */
+/* Bi-directional virtual scroll engine, vanilla HTML CSS JS          */
+/* ------------------------------------------------------------------ */
+
+:root {
+    --void: #030508;
+    /* hyper-carbon deep void */
+    --panel: #060A10;
+    /* raised carbon surface */
+    --silver: #E2E8F0;
+    /* cold silver text */
+    --dim: rgba(226, 232, 240, 0.48);
+    --faint: rgba(226, 232, 240, 0.22);
+    --line: rgba(226, 232, 240, 0.10);
+    --cyan: #00F0FF;
+    /* neon cyan telemetry */
+    --cyan-soft: rgba(0, 240, 255, 0.10);
+    --cyan-glass: rgba(0, 240, 255, 0.05);
+    --red: #FF003C;
+    /* laser red micro interactions */
+    --disp: 'Space Grotesk', sans-serif;
+    --body: 'Inter', sans-serif;
+    --ease-silk: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    overflow: hidden;
+    /* virtual scroll engine owns the page */
+    overscroll-behavior: none;
+}
+
+body {
+    background: var(--void);
+    color: var(--silver);
+    font-family: var(--body);
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* faint engineering grid behind everything */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        repeating-linear-gradient(to right, rgba(226, 232, 240, 0.025) 0 1px, transparent 1px 120px),
+        repeating-linear-gradient(to bottom, rgba(226, 232, 240, 0.02) 0 1px, transparent 1px 120px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+::selection {
+    background: var(--cyan);
+    color: var(--void);
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button {
+    font-family: inherit;
+    background: none;
+    border: 0;
+    color: inherit;
+    cursor: pointer;
+}
+
+button:focus-visible,
+a:focus-visible {
+    outline: 1px solid var(--cyan);
+    outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------- */
+/* STAGE AND TRACK PANELS                                      */
+/* ---------------------------------------------------------- */
+
+.stage {
+    position: relative;
+    z-index: 1;
+}
+
+.panel {
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    will-change: transform;
+}
+
+.t-left {
+    left: 0;
+}
+
+.t-right {
+    left: 50%;
+}
+
+.panel-inner {
+    width: 100%;
+    padding: 110px clamp(36px, 5vw, 84px);
+}
+
+/* center seam */
+.seam {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    width: 1px;
+    height: 100vh;
+    background: var(--line);
+    z-index: 4;
+    pointer-events: none;
+}
+
+.seam::after {
+    content: "";
+    position: absolute;
+    left: -2px;
+    top: 0;
+    width: 5px;
+    height: 56px;
+    background: var(--cyan);
+    opacity: 0.9;
+    transform: translateY(0);
+}
+
+/* full-bleed media panels */
+.panel-media {
+    padding: 0;
+    align-items: stretch;
+}
+
+.media-frame {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.media-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(0.55) contrast(1.12) brightness(0.78);
+}
+
+/* cyan duotone wash to unify photography with the HUD */
+.media-frame::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, rgba(0, 240, 255, 0.10), rgba(3, 5, 8, 0.55) 70%);
+    mix-blend-mode: screen;
+    pointer-events: none;
+}
+
+.media-tag {
+    position: absolute;
+    left: 28px;
+    bottom: 26px;
+    z-index: 2;
+    font-family: var(--disp);
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    color: var(--silver);
+    background: rgba(3, 5, 8, 0.6);
+    border: 1px solid var(--line);
+    padding: 10px 14px;
+    backdrop-filter: blur(4px);
+}
+
+.media-tag b {
+    color: var(--cyan);
+    font-weight: 500;
+}
+
+/* infinite scan line on the hero image */
+.scanline {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: var(--cyan);
+    box-shadow: 0 0 14px rgba(0, 240, 255, 0.9), 0 0 40px rgba(0, 240, 255, 0.35);
+    z-index: 2;
+    animation: scanY 6s linear infinite;
+}
+
+@keyframes scanY {
+    0% {
+        top: -2px;
+    }
+
+    50% {
+        top: 100%;
+    }
+
+    100% {
+        top: -2px;
+    }
+}
+
+/* ---------------------------------------------------------- */
+/* SHARED TYPE PARTS                                           */
+/* ---------------------------------------------------------- */
+
+.eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: var(--disp);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.34em;
+    color: var(--cyan);
+    margin-bottom: 30px;
+}
+
+.eyebrow::before {
+    content: "";
+    width: 34px;
+    height: 1px;
+    background: var(--cyan);
+}
+
+.lede {
+    color: var(--dim);
+    font-size: 14px;
+    line-height: 1.85;
+    letter-spacing: 0.02em;
+    max-width: 46ch;
+}
+
+/* ---------------------------------------------------------- */
+/* BLOCK 1 // TELEMETRY HERO                                   */
+/* ---------------------------------------------------------- */
+
+.hero-title {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: clamp(3.4rem, 6.4vw, 6.6rem);
+    line-height: 0.94;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    margin-bottom: 34px;
+}
+
+.hero-title .slash {
+    color: var(--cyan);
+}
+
+.hero-title .thin {
+    font-weight: 400;
+    color: var(--dim);
+}
+
+.clock-shell {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 16px;
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--cyan);
+    padding: 16px 22px;
+    margin: 38px 0 44px;
+    background: rgba(6, 10, 16, 0.7);
+}
+
+.clock-label {
+    font-family: var(--disp);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--dim);
+}
+
+#live-clock {
+    font-family: var(--disp);
+    font-weight: 500;
+    font-size: clamp(1.3rem, 2vw, 1.8rem);
+    letter-spacing: 0.08em;
+    color: var(--cyan);
+    font-variant-numeric: tabular-nums;
+    min-width: 11ch;
+}
+
+#live-clock .ms {
+    color: var(--red);
+}
+
+.spec-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    border-top: 1px solid var(--line);
+}
+
+.spec-cell {
+    flex: 1 1 0;
+    min-width: 120px;
+    padding: 18px 18px 0 0;
+    border-right: 1px solid var(--line);
+    margin-right: 18px;
+}
+
+.spec-cell:last-child {
+    border-right: 0;
+    margin-right: 0;
+}
+
+.spec-cell .k {
+    font-family: var(--disp);
+    font-size: 10px;
+    letter-spacing: 0.26em;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 8px;
+}
+
+.spec-cell .v {
+    font-family: var(--disp);
+    font-weight: 500;
+    font-size: 1.25rem;
+    color: var(--silver);
+}
+
+.spec-cell .v small {
+    font-size: 0.7em;
+    color: var(--cyan);
+    margin-left: 4px;
+}
+
+/* ---------------------------------------------------------- */
+/* BLOCK 2 // BLUEPRINT ACCORDION                              */
+/* ---------------------------------------------------------- */
+
+.section-title {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: clamp(2rem, 3.2vw, 3.2rem);
+    line-height: 1.02;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    margin-bottom: 18px;
+}
+
+.section-title .slash {
+    color: var(--cyan);
+}
+
+.accordion {
+    margin-top: 38px;
+    border-top: 1px solid var(--line);
+}
+
+.acc-item {
+    border: 1px solid transparent;
+    border-bottom: 1px solid var(--line);
+    transition: border-color 0.35s var(--ease-silk), background 0.35s var(--ease-silk);
+}
+
+.acc-item.open {
+    border: 1px solid var(--cyan);
+    background: var(--cyan-glass);
+}
+
+.acc-head {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    text-align: left;
+    padding: 22px 18px;
+}
+
+.acc-index {
+    font-family: var(--disp);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: var(--faint);
+    transition: color 0.3s;
+}
+
+.acc-item.open .acc-index {
+    color: var(--red);
+}
+
+.acc-title {
+    flex: 1;
+    font-family: var(--disp);
+    font-weight: 500;
+    font-size: 1.05rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.acc-icon {
+    position: relative;
+    width: 14px;
+    height: 14px;
+    flex: 0 0 14px;
+}
+
+.acc-icon::before,
+.acc-icon::after {
+    content: "";
+    position: absolute;
+    background: var(--cyan);
+    transition: transform 0.4s var(--ease-silk), background 0.3s;
+}
+
+.acc-icon::before {
+    left: 0;
+    top: 6px;
+    width: 14px;
+    height: 2px;
+}
+
+.acc-icon::after {
+    left: 6px;
+    top: 0;
+    width: 2px;
+    height: 14px;
+}
+
+.acc-item.open .acc-icon::after {
+    transform: scaleY(0);
+}
+
+.acc-item.open .acc-icon::before {
+    background: var(--red);
+}
+
+.acc-head:hover .acc-title {
+    color: var(--cyan);
+}
+
+.acc-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.55s var(--ease-silk);
+}
+
+.acc-body p {
+    padding: 0 18px 24px 51px;
+    color: var(--dim);
+    font-size: 13.5px;
+    line-height: 1.85;
+}
+
+.acc-body .data-strip {
+    display: flex;
+    gap: 26px;
+    padding: 0 18px 22px 51px;
+    font-family: var(--disp);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--cyan);
+}
+
+/* blueprint photo panel - image, marker and data react to the accordion */
+.bp-stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--panel);
+}
+
+.bp-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.8s var(--ease-silk);
+    filter: grayscale(0.55) contrast(1.12) brightness(0.75);
+}
+
+.bp-img.active {
+    opacity: 1;
+}
+
+/* same cyan duotone wash as the other media panels */
+.bp-stage::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, rgba(0, 240, 255, 0.10), rgba(3, 5, 8, 0.55) 70%);
+    mix-blend-mode: screen;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.bp-chip {
+    position: absolute;
+    top: 26px;
+    left: 28px;
+    z-index: 3;
+    font-family: var(--disp);
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    color: var(--silver);
+    background: rgba(3, 5, 8, 0.6);
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--cyan);
+    padding: 10px 14px;
+    backdrop-filter: blur(4px);
+}
+
+/* target marker - repositions per accordion item */
+.bp-marker {
+    position: absolute;
+    z-index: 3;
+    left: 24%;
+    top: 28%;
+    transition: left 0.8s var(--ease-silk), top 0.8s var(--ease-silk);
+}
+
+.bp-ring {
+    display: block;
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid var(--cyan);
+    border-radius: 50%;
+    box-shadow: 0 0 14px rgba(0, 240, 255, 0.7);
+    position: relative;
+    transition: border-color 0.2s;
+}
+
+/* expanding sonar pulse */
+.bp-ring::after {
+    content: "";
+    position: absolute;
+    inset: -1.5px;
+    border: 1px solid var(--cyan);
+    border-radius: 50%;
+    animation: bpPulse 2.2s ease-out infinite;
+}
+
+@keyframes bpPulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.9;
+    }
+
+    100% {
+        transform: scale(3.2);
+        opacity: 0;
+    }
+}
+
+.bp-hairline {
+    position: absolute;
+    left: 22px;
+    top: 7.5px;
+    width: 72px;
+    height: 1px;
+    background: var(--cyan);
+    box-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+}
+
+.bp-data {
+    position: absolute;
+    left: 102px;
+    top: -10px;
+    white-space: nowrap;
+    font-family: var(--disp);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: var(--cyan);
+    background: rgba(3, 5, 8, 0.7);
+    border: 1px solid rgba(0, 240, 255, 0.35);
+    padding: 8px 12px;
+    backdrop-filter: blur(4px);
+}
+
+/* laser red blip on change */
+.bp-marker.blip .bp-ring {
+    border-color: var(--red);
+    box-shadow: 0 0 14px rgba(255, 0, 60, 0.8);
+}
+
+.bp-marker.blip .bp-hairline {
+    background: var(--red);
+}
+
+/* ---------------------------------------------------------- */
+/* BLOCK 3 // 3D KINETIC CAROUSEL                              */
+/* ---------------------------------------------------------- */
+
+.carousel-panel {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    padding-top: 90px;
+    padding-bottom: 80px;
+}
+
+.c3d-stage {
+    width: 100%;
+    height: 330px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1000px;
+    cursor: grab;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.c3d-stage.dragging {
+    cursor: grabbing;
+}
+
+.c3d {
+    position: relative;
+    width: 230px;
+    height: 300px;
+    transform-style: preserve-3d;
+}
+
+.c3d-card {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    transition: opacity 0.2s linear;
+}
+
+/* two-sided cards: designed back face instead of mirrored text */
+.card-face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 22px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+.face-front {
+    background: var(--cyan-glass);
+    border: 1px solid var(--cyan);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 0 50px rgba(0, 240, 255, 0.06) inset;
+}
+
+.face-back {
+    transform: rotateY(180deg);
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    background: rgba(6, 10, 16, 0.88);
+    border: 1px dashed rgba(0, 240, 255, 0.35);
+}
+
+.face-back .back-id {
+    font-family: var(--disp);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.34em;
+    color: var(--cyan);
+}
+
+.face-back .back-bars {
+    width: 90px;
+    height: 30px;
+    background: repeating-linear-gradient(to right, rgba(0, 240, 255, 0.55) 0 2px, transparent 2px 6px, rgba(0, 240, 255, 0.3) 6px 7px, transparent 7px 12px);
+}
+
+.face-back .back-label {
+    font-family: var(--disp);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--faint);
+}
+
+.c3d-card .c-id {
+    font-family: var(--disp);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--red);
+}
+
+.c3d-card .c-name {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.c3d-card .c-fig {
+    font-family: var(--disp);
+    font-weight: 500;
+    font-size: 2rem;
+    color: var(--cyan);
+}
+
+.c3d-card .c-fig small {
+    font-size: 0.5em;
+    color: var(--dim);
+    margin-left: 4px;
+}
+
+.c3d-card .c-desc {
+    font-size: 11.5px;
+    line-height: 1.7;
+    color: var(--dim);
+}
+
+/* control deck */
+.c3d-deck {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.c3d-status {
+    font-family: var(--disp);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    color: var(--silver);
+}
+
+.c3d-status b {
+    color: var(--cyan);
+    font-weight: 500;
+}
+
+.c3d-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.c3d-ctl,
+.mod-btn {
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line);
+    background: rgba(6, 10, 16, 0.7);
+    transition: border-color 0.25s, color 0.25s, background 0.25s;
+}
+
+.c3d-ctl {
+    width: 42px;
+}
+
+.c3d-ctl:hover {
+    border-color: var(--red);
+}
+
+.chev-l,
+.chev-r {
+    width: 9px;
+    height: 9px;
+    border-left: 1.6px solid var(--cyan);
+    border-bottom: 1.6px solid var(--cyan);
+    transition: border-color 0.25s;
+}
+
+.chev-l {
+    transform: rotate(45deg) translate(1px, -1px);
+}
+
+.chev-r {
+    transform: rotate(-135deg) translate(1px, -1px);
+}
+
+.c3d-ctl:hover .chev-l,
+.c3d-ctl:hover .chev-r {
+    border-color: var(--red);
+}
+
+.mod-btn {
+    min-width: 42px;
+    padding: 0 10px;
+    font-family: var(--disp);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: var(--dim);
+}
+
+.mod-btn:hover {
+    color: var(--silver);
+    border-color: rgba(226, 232, 240, 0.3);
+}
+
+.mod-btn.active {
+    color: var(--red);
+    border-color: var(--red);
+}
+
+/* play and pause glyphs drawn in CSS */
+.ico-play {
+    width: 0;
+    height: 0;
+    border-left: 9px solid var(--cyan);
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+}
+
+.c3d-ctl.playing .ico-play {
+    width: 8px;
+    height: 12px;
+    border-top: 0;
+    border-bottom: 0;
+    border-left: 3px solid var(--cyan);
+    border-right: 3px solid var(--cyan);
+}
+
+.c3d-hint {
+    font-family: var(--disp);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--faint);
+}
+
+.c3d-hint b {
+    color: var(--cyan);
+    font-weight: 500;
+}
+
+/* ---------------------------------------------------------- */
+/* BLOCK 4 // SYSTEM TABS AND KINETIC TYPE                     */
+/* ---------------------------------------------------------- */
+
+.tab-rail {
+    display: flex;
+    border: 1px solid var(--line);
+    margin: 40px 0 30px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 18px 10px;
+    font-family: var(--disp);
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    color: var(--dim);
+    border-right: 1px solid var(--line);
+    position: relative;
+    transition: color 0.2s, background 0.2s;
+}
+
+.tab-btn:last-child {
+    border-right: 0;
+}
+
+.tab-btn::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 100%;
+    height: 2px;
+    background: var(--red);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s var(--ease-silk);
+}
+
+.tab-btn:hover {
+    color: var(--silver);
+    background: rgba(226, 232, 240, 0.03);
+}
+
+.tab-btn.active {
+    color: var(--red);
+}
+
+.tab-btn.active::after {
+    transform: scaleX(1);
+}
+
+.tab-copy {
+    min-height: 96px;
+}
+
+.tab-copy p {
+    color: var(--dim);
+    font-size: 13.5px;
+    line-height: 1.85;
+    max-width: 44ch;
+}
+
+.tab-meta {
+    margin-top: 26px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.tab-chip {
+    font-family: var(--disp);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--cyan);
+    border: 1px solid rgba(0, 240, 255, 0.35);
+    padding: 8px 14px;
+}
+
+.promo-line {
+    margin-top: 46px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--faint);
+}
+
+.promo-line a {
+    color: var(--dim);
+    border-bottom: 1px solid var(--faint);
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.promo-line a:hover {
+    color: var(--cyan);
+    border-color: var(--cyan);
+}
+
+/* kinetic outline typography */
+.kinetic-panel {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 0 clamp(30px, 4vw, 70px);
+    overflow: hidden;
+    background: radial-gradient(circle at 30% 70%, rgba(255, 0, 60, 0.05), transparent 55%);
+}
+
+.kinetic-label {
+    font-family: var(--disp);
+    font-size: 11px;
+    letter-spacing: 0.34em;
+    color: var(--red);
+    margin-bottom: 22px;
+}
+
+.kinetic-value {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: clamp(3.4rem, 8vw, 9rem);
+    line-height: 0.92;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--cyan);
+    transition: opacity 0.18s ease, transform 0.18s ease, letter-spacing 0.18s ease;
+    word-break: break-word;
+}
+
+.kinetic-value.swap {
+    opacity: 0;
+    transform: translateY(14px);
+    letter-spacing: 0.06em;
+}
+
+.kinetic-sub {
+    margin-top: 26px;
+    font-family: var(--disp);
+    font-size: 12px;
+    letter-spacing: 0.26em;
+    color: var(--dim);
+}
+
+.kinetic-sub b {
+    color: var(--silver);
+    font-weight: 500;
+}
+
+/* ---------------------------------------------------------- */
+/* THE HUD OVERLAY                                             */
+/* ---------------------------------------------------------- */
+
+.hud {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.hud-frame {
+    position: absolute;
+    inset: 14px;
+    border: 1px solid var(--line);
+}
+
+/* corner brackets */
+.hud-frame::before,
+.hud-frame::after,
+.hud-frame .ck::before,
+.hud-frame .ck::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-color: var(--cyan);
+    border-style: solid;
+}
+
+.hud-frame::before {
+    top: -1px;
+    left: -1px;
+    border-width: 2px 0 0 2px;
+}
+
+.hud-frame::after {
+    top: -1px;
+    right: -1px;
+    border-width: 2px 2px 0 0;
+}
+
+.hud-frame .ck::before {
+    bottom: -1px;
+    left: -1px;
+    border-width: 0 0 2px 2px;
+}
+
+.hud-frame .ck::after {
+    bottom: -1px;
+    right: -1px;
+    border-width: 0 2px 2px 0;
+}
+
+.hud-item {
+    position: absolute;
+    pointer-events: auto;
+}
+
+.hud-brand {
+    top: 30px;
+    left: 38px;
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.3em;
+}
+
+.hud-brand .slash {
+    color: var(--cyan);
+}
+
+.hud-index {
+    top: 32px;
+    right: 38px;
+    font-family: var(--disp);
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--dim);
+    font-variant-numeric: tabular-nums;
+}
+
+.hud-index b {
+    color: var(--cyan);
+    font-weight: 500;
+}
+
+.hud-credit {
+    bottom: 30px;
+    left: 38px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--disp);
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    color: var(--dim);
+}
+
+.hud-credit a {
+    color: var(--silver);
+    transition: color 0.2s;
+}
+
+.hud-credit a:hover {
+    color: var(--cyan);
+}
+
+.hud-credit .dot {
+    width: 5px;
+    height: 5px;
+    background: var(--cyan);
+}
+
+.hud-progress {
+    bottom: 30px;
+    right: 38px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: var(--disp);
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    color: var(--cyan);
+    font-variant-numeric: tabular-nums;
+}
+
+.hud-progress .bar {
+    width: 90px;
+    height: 2px;
+    background: var(--line);
+    position: relative;
+    overflow: hidden;
+}
+
+.hud-progress .bar i {
+    position: absolute;
+    inset: 0;
+    background: var(--cyan);
+    transform: scaleX(0);
+    transform-origin: left;
+}
+
+.hud-hint {
+    bottom: 88px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--disp);
+    font-size: 10px;
+    letter-spacing: 0.34em;
+    color: var(--faint);
+    animation: hintPulse 2.6s ease-in-out infinite;
+    transition: opacity 0.6s ease;
+}
+
+.hud-hint.hide {
+    opacity: 0 !important;
+    animation: none;
+}
+
+/* arrow nav - bottom center, split by the seam */
+.hud-arrows {
+    bottom: 26px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 1px;
+}
+
+.arrow-btn {
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line);
+    background: rgba(6, 10, 16, 0.78);
+    backdrop-filter: blur(4px);
+    transition: border-color 0.25s, background 0.25s, opacity 0.25s;
+}
+
+.arrow-btn .chev {
+    width: 11px;
+    height: 11px;
+    border-left: 1.6px solid var(--cyan);
+    border-bottom: 1.6px solid var(--cyan);
+    transition: border-color 0.25s, transform 0.25s var(--ease-silk);
+}
+
+.arrow-btn.up .chev {
+    transform: rotate(135deg) translate(-2px, 2px);
+}
+
+.arrow-btn.down .chev {
+    transform: rotate(-45deg) translate(2px, -2px);
+}
+
+.arrow-btn:hover {
+    border-color: var(--red);
+    background: rgba(255, 0, 60, 0.06);
+}
+
+.arrow-btn:hover .chev {
+    border-color: var(--red);
+}
+
+.arrow-btn.up:hover .chev {
+    transform: rotate(135deg) translate(0, 0);
+}
+
+.arrow-btn.down:hover .chev {
+    transform: rotate(-45deg) translate(0, 0);
+}
+
+.arrow-btn[disabled] {
+    opacity: 0.25;
+    pointer-events: none;
+}
+
+@keyframes hintPulse {
+
+    0%,
+    100% {
+        opacity: 0.35;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* ---------------------------------------------------------- */
+/* REVEALS                                                     */
+/* ---------------------------------------------------------- */
+
+.reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    transition: opacity 0.9s var(--ease-silk), transform 0.9s var(--ease-silk);
+}
+
+.reveal.on {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ---------------------------------------------------------- */
+/* REDUCED MOTION                                              */
+/* ---------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+    .scanline {
+        animation: none;
+        top: 40%;
+    }
+
+    .hud-hint {
+        animation: none;
+        opacity: 0.6;
+    }
+
+    .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
+    .acc-body {
+        transition: none;
+    }
+
+    .kinetic-value {
+        transition: none;
+    }
+
+    .bp-img {
+        transition: none;
+    }
+
+    .bp-marker {
+        transition: none;
+    }
+
+    .bp-ring::after {
+        animation: none;
+        opacity: 0;
+    }
+}
+
+/* ---------------------------------------------------------- */
+/* MOBILE AND NARROW LAYOUT - native scroll fallback           */
+/* ---------------------------------------------------------- */
+
+@media (max-width: 900px) {
+
+    html,
+    body {
+        overflow: visible;
+        overflow-y: auto;
+        overscroll-behavior: auto;
+    }
+
+    .panel {
+        position: static;
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        transform: none !important;
+        will-change: auto;
+    }
+
+    .panel-inner {
+        padding: 86px 26px;
+    }
+
+    .panel-media {
+        height: 64vh;
+        min-height: 380px;
+    }
+
+    .kinetic-panel {
+        min-height: 60vh;
+        padding: 70px 26px;
+    }
+
+    .seam {
+        display: none;
+    }
+
+    .hud-frame,
+    .hud-index,
+    .hud-hint,
+    .hud-arrows {
+        display: none;
+    }
+
+    .hud-brand {
+        top: 20px;
+        left: 22px;
+        mix-blend-mode: difference;
+    }
+
+    .hud-credit {
+        bottom: auto;
+        top: 20px;
+        right: 22px;
+        left: auto;
+    }
+
+    .hud-progress {
+        display: none;
+    }
+
+    .c3d-stage {
+        height: 340px;
+    }
+
+    .spec-cell {
+        flex: 1 1 40%;
+        margin-bottom: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 2.9rem;
+    }
+
+    .kinetic-value {
+        font-size: 2.6rem;
+        -webkit-text-stroke-width: 1px;
+    }
+
+    .tab-btn {
+        letter-spacing: 0.12em;
+        font-size: 10.5px;
+    }
+}
